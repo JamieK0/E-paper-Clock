@@ -19,8 +19,8 @@ const uint8_t dstPin(4); // connect to GND to add 1 hour as DST.
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 56;
-int hour = 16;
+int minute = 43;
+int hour = 17;
 int day = 4;
 int date = 28;
 int month = 9;
@@ -47,7 +47,7 @@ void setup()
   pinMode(wakeUpPin, INPUT_PULLUP);
   pinMode(dstPin, INPUT_PULLUP);
   rtc.enableTrickleCharge(TCR_3K);   //series resistor 3kOhm
-  rtc.setTime(sec, minute, hour, day, date, month, year);
+  //rtc.setTime(sec, minute, hour, day, date, month, year);
   Serial.println("VOID SETUP = 1/2");
   getDstTime();
   displayDate();
@@ -67,12 +67,14 @@ void displayDate()
   u8g2Fonts.setForegroundColor(GxEPD_BLACK);
   u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
   u8g2Fonts.setFont(u8g2_font_logisoso20_tr);
-  
+
   rtc.updateTime();
+
   String dateString = rtc.stringDate(); //rtc to output current date
+      Serial.println(rtc.stringDate());
 
   uint16_t x = 70;
-  uint16_t y = 120; //bottom
+  uint16_t y = 110; //bottom
   // covers bottom half
   display.setFullWindow();
   display.firstPage();
@@ -127,7 +129,8 @@ void loop()
     // Refresh the display completely
     // every hour, hopefully reduces ghosting and burn in
     // also updates the date at midnight
-    displayDate();
+        displayDate();
+
   }
 // IM GOING TO TAKE DISPLAYDATE OUT OF THE LOOP SO THAT I CAN SEE IT REFRESH FASTER FOR TESTING
 
