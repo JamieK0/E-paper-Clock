@@ -20,17 +20,17 @@
 */
 //E-paper
 #include <GxEPD2_BW.h>
-#include <GxEPD2_3C.h>
-#include <GxEPD2_7C.h>
-#include <Fonts/FreeSansBold24pt7b.h>
-//#include <Fonts/FreeSans12pt7b.h>
+//#include <GxEPD2_3C.h>
+//#include <GxEPD2_7C.h>
+#include "FreeSansBoldSmall24pt7b.h"
+#include "FreeSansSmall12pt7b.h"
 
 // select the display class and display driver class in the following file (new style):
 //#include "GxEPD2_display_selection_new_style.h"
 
 // or select the display constructor line in one of the following files (old style):
 #include "GxEPD2_display_selection.h"
-#include "GxEPD2_display_selection_added.h"
+//#include "GxEPD2_display_selection_added.h"
 
 // alternately you can copy the constructor from GxEPD2_display_selection.h or GxEPD2_display_selection_added.h to here
 // e.g. for Wemos D1 mini:
@@ -51,6 +51,7 @@ int day = 4;
 int date = 28;
 int month = 9;
 int year = 2023;
+int refreshRate = 60000;
 
 void setup() {
   //display.init(115200); // default 10ms reset pulse, e.g. for bare panels with DESPI-C02
@@ -60,14 +61,15 @@ void setup() {
     ;
   Serial.println("Read/Write Time - RTC Example");
   Wire.begin();
-  if (rtc.begin() == false) {
+  /*if (rtc.begin() == false) {
     Serial.println("Something went wrong, check wiring");
     while (1)
       ;
   } else
-    Serial.println("RTC online!");
+    Serial.println("RTC online!"); */
   delay(1000);
   //rtc.setTime(sec, minute, hour, day, date, month, year);
+  rtc.enableTrickleCharge(TCR_3K);   //series resistor 3kOhm
 }
 
 
@@ -78,7 +80,7 @@ void setup() {
   return currentDay;
 } */
 
-
+/*
 String AMPM() {
   String TimeAMPM;
   if (rtc.isPM() == true) {
@@ -89,7 +91,7 @@ String AMPM() {
   Serial.println ("Test" + TimeAMPM);
   return TimeAMPM;
 }
-
+*/
 
 //const char currentTime[] = "";
 
@@ -112,7 +114,7 @@ void loop() {
 
     //E-paper Display text
     display.setRotation(3);
-    display.setFont(&FreeSansBold24pt7b);
+    display.setFont(&FreeSansBoldSmall24pt7b);
     display.setTextColor(GxEPD_BLACK);
     int16_t tbx, tby;
     uint16_t tbw, tbh;
@@ -125,22 +127,22 @@ void loop() {
     do {
       //findCurrentDay();  //Finds the current day of the week from the RTC clock. RTC clock outputs day of week in 8-bit int
       //String currentDay = findCurrentDay();
-      AMPM (); //Checks if it is AM or PM
+      //AMPM (); //Checks if it is AM or PM
       //String 12hr = AMPM();
       display.fillScreen(GxEPD_WHITE);
       display.setCursor(x, 60);
       display.print(rtc.getHours());
       display.print(" : ");
       display.print(rtc.getMinutes());
-      display.print(AMPM());
+      //display.print(AMPM());
       display.setCursor(20, 120);  //Date and Day start
-      display.setFont(&FreeSansBold24pt7b);
+      display.setFont(&FreeSansSmall12pt7b);
       display.print(currentDate);
       display.setCursor(20, 120);
       //display.print(currentDay);
       Serial.print(rtc.getMinutes());
     } while (display.nextPage());
-    delay(60000);
+    delay(refreshRate);
   }
   //SET TIME?
   if (Serial.available()) {
