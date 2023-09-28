@@ -19,8 +19,8 @@ const uint8_t dstPin(4); // connect to GND to add 1 hour as DST.
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 49;
-int hour = 12;
+int minute = 56;
+int hour = 16;
 int day = 4;
 int date = 28;
 int month = 9;
@@ -30,6 +30,15 @@ int year = 2023;
 void setup()
 {
 
+  Serial.begin(115200);
+    Wire.begin();
+  if (rtc.begin() == false) {
+    Serial.println("Something went wrong, check wiring");
+    while (1);
+  }
+  else
+    Serial.println("RTC online!");
+  Serial.println();
 
   u8g2Fonts.begin(display); // connect the u8g2
 
@@ -39,7 +48,7 @@ void setup()
   pinMode(dstPin, INPUT_PULLUP);
   rtc.enableTrickleCharge(TCR_3K);   //series resistor 3kOhm
   rtc.setTime(sec, minute, hour, day, date, month, year);
-
+  Serial.println("VOID SETUP = 1/2");
   getDstTime();
   displayDate();
   
@@ -49,6 +58,8 @@ void setup()
 // and does a complete screen refresh
 void displayDate()
 {
+    Serial.println("DISPLAY DATE = start");
+
   display.init();
   
   display.setRotation(3); //0 is 'portrait'
@@ -57,9 +68,10 @@ void displayDate()
   u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
   u8g2Fonts.setFont(u8g2_font_logisoso20_tr);
   
+  rtc.updateTime();
   String dateString = rtc.stringDate(); //rtc to output current date
 
-  uint16_t x = 80;
+  uint16_t x = 70;
   uint16_t y = 120; //bottom
   // covers bottom half
   display.setFullWindow();
@@ -71,12 +83,16 @@ void displayDate()
   }
   while (display.nextPage());
   display.hibernate();
+    Serial.println("DISPLAY DATE. = finished");
+
 }
 
 // Displays the time in the top half of the screen, as a partial refresh
 void displayTime()
 {
-  
+      Serial.println("DISPLAY TIME = start");
+    
+    rtc.updateTime();
     String timeString = rtc.stringTime();
 
 
@@ -85,7 +101,7 @@ void displayTime()
   // Only numbers and symbols to save space.https://github.com/olikraus/u8g2/wiki/fntlist99#50-pixel-height
   u8g2Fonts.setFont(u8g2_font_logisoso50_tn);
   
-  uint16_t x = 100;
+  uint16_t x = 30;
   uint16_t y = 62; //top half, depends on font
 
   display.setPartialWindow(0, 0, display.width(), display.height() / 2);
@@ -97,11 +113,13 @@ void displayTime()
   }
   while (display.nextPage());
   display.hibernate();
+      Serial.println("DISPLAY TIME = finish");
 
 }
 
 void loop()
 {
+  Serial.println("VOID LOOP = start");
 
   getDstTime();
 
@@ -111,12 +129,17 @@ void loop()
     // also updates the date at midnight
     displayDate();
   }
+// IM GOING TO TAKE DISPLAYDATE OUT OF THE LOOP SO THAT I CAN SEE IT REFRESH FASTER FOR TESTING
+
   displayTime();
+
+  Serial.println("VOID LOOP = before sleep");
 
   delay(500); // if this isn't here the arduino seems to fall asleep before finishing the last job
 
   setAlarm();
-/*
+
+
   // Allow wake up pin to trigger on interrupt low.
   attachInterrupt(digitalPinToInterrupt(2), alarmIsr, FALLING);
 
@@ -124,10 +147,11 @@ void loop()
   LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 
   // Wakes up here!
+  Serial.println("VOID LOOP = woke up");
 
   // Disable external pin interrupt on wake up pin.
   detachInterrupt(digitalPinToInterrupt(2));
-
+/*
   if (myRTC.alarm(DS3232RTC::ALARM_1)) {
     //also clears alarm flag
   }
@@ -135,6 +159,7 @@ void loop()
 }
 
 void setAlarm() {
+	rtc.enablePeriodicUpdateInterrupt(0, 0);
   // setAlarm(alarmType, seconds, minutes, hours, daydate)
   /* myRTC.setAlarm(DS3232RTC::ALM1_MATCH_SECONDS, 0, 0, 0, 1); // starts on next whole minute
   myRTC.alarm(DS3232RTC::ALARM_1);
