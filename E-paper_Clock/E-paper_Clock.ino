@@ -23,7 +23,7 @@
 #include <GxEPD2_3C.h>
 #include <GxEPD2_7C.h>
 #include <Fonts/FreeSansBold24pt7b.h>
-#include <Fonts/FreeSans12pt7b.h>
+//#include <Fonts/FreeSans12pt7b.h>
 
 // select the display class and display driver class in the following file (new style):
 //#include "GxEPD2_display_selection_new_style.h"
@@ -45,11 +45,11 @@ RV3028 rtc;
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 17;
-int hour = 22;
-int day = 0;
-int date = 24;
-int month = 4;
+int minute = 49;
+int hour = 12;
+int day = 4;
+int date = 28;
+int month = 9;
 int year = 2023;
 
 void setup() {
@@ -59,7 +59,6 @@ void setup() {
   while (!Serial)
     ;
   Serial.println("Read/Write Time - RTC Example");
-
   Wire.begin();
   if (rtc.begin() == false) {
     Serial.println("Something went wrong, check wiring");
@@ -68,15 +67,16 @@ void setup() {
   } else
     Serial.println("RTC online!");
   delay(1000);
+  //rtc.setTime(sec, minute, hour, day, date, month, year);
 }
 
 
-String findCurrentDay() {
+/* String findCurrentDay() {
 
   char days[10][10] = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" };
   String currentDay = days[rtc.getWeekday()];
   return currentDay;
-}
+} */
 
 
 String AMPM() {
@@ -123,23 +123,24 @@ void loop() {
     display.setFullWindow();
     display.firstPage();
     do {
-      findCurrentDay();  //Finds the current day of the week from the RTC clock. RTC clock outputs day of week in 8-bit int
-      String currentDay = findCurrentDay();
+      //findCurrentDay();  //Finds the current day of the week from the RTC clock. RTC clock outputs day of week in 8-bit int
+      //String currentDay = findCurrentDay();
       AMPM (); //Checks if it is AM or PM
       //String 12hr = AMPM();
       display.fillScreen(GxEPD_WHITE);
-      display.setCursor(x, 40);
+      display.setCursor(x, 60);
       display.print(rtc.getHours());
       display.print(" : ");
       display.print(rtc.getMinutes());
       display.print(AMPM());
-      display.setCursor(160, 120);  //Date and Day start
-      display.setFont(&FreeSans12pt7b);
+      display.setCursor(20, 120);  //Date and Day start
+      display.setFont(&FreeSansBold24pt7b);
       display.print(currentDate);
       display.setCursor(20, 120);
-      display.print(currentDay);
+      //display.print(currentDay);
+      Serial.print(rtc.getMinutes());
     } while (display.nextPage());
-    delay(10000);
+    delay(60000);
   }
   //SET TIME?
   if (Serial.available()) {
