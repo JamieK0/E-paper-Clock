@@ -19,11 +19,11 @@ const uint8_t dstPin(4); // connect to GND to add 1 hour as DST.
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 43;
-int hour = 17;
-int day = 4;
-int date = 28;
-int month = 9;
+int minute = 46;
+int hour = 16;
+int day = 1;
+int date = 9;
+int month = 10;
 int year = 2023;
 
 
@@ -81,7 +81,7 @@ void displayDate()
   do // update the whole screen
   {
     u8g2Fonts.setCursor(x, y);
-    u8g2Fonts.print(dateString);
+    u8g2Fonts.print(dateString); 
   }
   while (display.nextPage());
   display.hibernate();
@@ -103,7 +103,7 @@ void displayTime()
   // Only numbers and symbols to save space.https://github.com/olikraus/u8g2/wiki/fntlist99#50-pixel-height
   u8g2Fonts.setFont(u8g2_font_logisoso50_tn);
   
-  uint16_t x = 30;
+  uint16_t x = 60;
   uint16_t y = 62; //top half, depends on font
 
   display.setPartialWindow(0, 0, display.width(), display.height() / 2);
@@ -111,7 +111,10 @@ void displayTime()
   do // Update the upper part of the screen
   {
     u8g2Fonts.setCursor(x, y);
-    u8g2Fonts.print(timeString);
+    u8g2Fonts.print(rtc.getHours());
+    u8g2Fonts.print(":");
+    u8g2Fonts.print(rtc.getMinutes());
+    //u8g2Fonts.print(timeString); This one has seconds which does not work on e-paper because of low refresh rate
   }
   while (display.nextPage());
   display.hibernate();
