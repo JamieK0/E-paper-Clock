@@ -19,8 +19,8 @@ const uint8_t dstPin(4); // connect to GND to add 1 hour as DST.
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 46;
-int hour = 16;
+int minute = 2;
+int hour = 5;
 int day = 1;
 int date = 9;
 int month = 10;
@@ -47,7 +47,7 @@ void setup()
   pinMode(wakeUpPin, INPUT_PULLUP);
   pinMode(dstPin, INPUT_PULLUP);
   rtc.enableTrickleCharge(TCR_3K);   //series resistor 3kOhm
-  //rtc.setTime(sec, minute, hour, day, date, month, year);
+  rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME
   Serial.println("VOID SETUP = 1/2");
   getDstTime();
   displayDate();
@@ -111,10 +111,22 @@ void displayTime()
   do // Update the upper part of the screen
   {
     u8g2Fonts.setCursor(x, y);
-    u8g2Fonts.print(rtc.getHours());
+    if (rtc.getHours() < 10) {
+      u8g2Fonts.print(0);
+      u8g2Fonts.print(rtc.getHours());
+      }
+    else {
+      u8g2Fonts.print(rtc.getHours());  
+    }
     u8g2Fonts.print(":");
+    if (rtc.getMinutes() < 10) {
+      u8g2Fonts.print(0);
+      u8g2Fonts.print(rtc.getMinutes());
+    }
+    else {
     u8g2Fonts.print(rtc.getMinutes());
     //u8g2Fonts.print(timeString); This one has seconds which does not work on e-paper because of low refresh rate
+    }
   }
   while (display.nextPage());
   display.hibernate();
