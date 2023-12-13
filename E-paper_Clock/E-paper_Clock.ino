@@ -19,11 +19,11 @@ const uint8_t dstPin(4); // connect to GND to add 1 hour as DST.
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 2;
-int hour = 5;
-int day = 1;
-int date = 9;
-int month = 10;
+int minute = 4;
+int hour = 9;
+int day = 4;
+int date = 14;
+int month = 12;
 int year = 2023;
 
 
@@ -46,8 +46,8 @@ void setup()
   // configure an interrupt on the falling edge from SQN pin
   pinMode(wakeUpPin, INPUT_PULLUP);
   pinMode(dstPin, INPUT_PULLUP);
-  rtc.enableTrickleCharge(TCR_3K);   //series resistor 3kOhm
-  rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME
+  //rtc.enableTrickleCharge(TCR_3K);   //series resistor 3kOhm
+  //rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME
   Serial.println("VOID SETUP = 1/2");
   getDstTime();
   displayDate();
