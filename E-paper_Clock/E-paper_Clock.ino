@@ -161,6 +161,9 @@ void loop()
   // Allow wake up pin to trigger on interrupt low.
   attachInterrupt(digitalPinToInterrupt(2), alarmIsr, FALLING);
 
+  Serial.println("VOID LOOP = powering down");
+
+
   // Power down
   LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 
