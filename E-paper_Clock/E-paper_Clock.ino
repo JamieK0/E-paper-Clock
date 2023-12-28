@@ -8,25 +8,13 @@
 // select the display class and display driver class in the following file (new style):
 #include "GxEPD2_display_selection.h"
 
-#include <ez_switch_lib.h> // Library for the buttons
-
-#define common_interrupt_pin 8 //Pin that the switches will link to via ez_switch. This pin will trigger the PCINT interupt
-#define num_switches 2 //Number of switches that is linked to the trigger
-Switches  my_switches(num_switches);
-
-byte my_switch_data[][3] =
-{
-    button_switch,  4, circuit_C2, //circuit_C2 is a dirrectly attached circuit with no external resistor
-    button_switch,  5, circuit_C2,
-};
-
 U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;  // font constructor
 RV3028 rtc;                       // create the RTC object
 
 const uint8_t wakeUpPin(2);  // connect Arduino pin D2 to RTC's SQW pin.
 
-//const uint8_t changeMin(4); // Button to change minutes
-//const uint8_t changeHr(5); // Button to change hours
+const uint8_t changeMin(4); // Button to change minutes
+const uint8_t changeHr(5); // Button to change hours
 const uint8_t up(0); // Button to increase time
 const uint8_t down(1); // Button to decrease time
 
@@ -63,6 +51,8 @@ void setup() {
 // time adjustment buttons with pullup resistor
   pinMode (up, INPUT_PULLUP);
   pinMode (down, INPUT_PULLUP);
+  pinMode (changeHr, INPUT_PULLUP);
+  pinMode (changeMin, INPUT_PULLUP);
 
 // allows for the change time buttons to interput the loop
   PCICR |= B00000100; //turns on PCINT for pins in group d
@@ -72,7 +62,7 @@ void setup() {
   Serial.println("VOID SETUP = 1/2");
   displayDate();
 }
-/*
+
 ISR (PCINT1_vect) {
   Serial.println("first stop in interupt");
   if (changeHr == 0) {
@@ -92,7 +82,7 @@ ISR (PCINT1_vect) {
     return;
   }
 }
-*/
+
 
 // Displays the date in the bottom half of the screen
 // and does a complete screen refresh
