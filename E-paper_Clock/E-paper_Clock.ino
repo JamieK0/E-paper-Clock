@@ -29,6 +29,7 @@ int date = 27;
 int month = 12;
 int year = 2023;
 
+volatile int changeTime = 0;
 
 void setup() {
 
@@ -49,27 +50,22 @@ void setup() {
   pinMode(wakeUpPin, INPUT_PULLUP);
 
 // time adjustment buttons with pullup resistor
-  pinMode (changeHr, INPUT);
-  pinMode (changeMin, INPUT);
-  pinMode (up, INPUT);
-  pinMode (down, INPUT);
+  pinMode (changeHr, INPUT_PULLUP);
+  pinMode (changeMin, INPUT_PULLUP);
+  pinMode (up, INPUT_PULLUP);
+  pinMode (down, INPUT_PULLUP);
 
 // allows the change buttons to interput the loop
   PCICR |= B00000100; //turns on PCINT for pins in group d
   PCMSK2 |= B00110000; //Pins D4 and D5 will interupt
-  //attachPCINT(20, PCINTchangeHr, FALLING);
-  //attachPCINT(21, PCINTchangeMin, FALLING);
-
   rtc.enableTrickleCharge(TCR_3K);  //series resistor 3kOhm
   rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME. Once set it needs to be commented out
   Serial.println("VOID SETUP = 1/2");
   displayDate();
 }
 
-void PCINT2_vect()
-{
-  Serial.println("change hr button");
-  displayDate();
+ISR (PCINT2_vect) {
+  changeTime = 1;
 }
 
 
@@ -110,8 +106,6 @@ void displayTime() {
   Serial.println("DISPLAY TIME = start");
 
   rtc.updateTime();
-  String timeString = rtc.stringTime();
-
 
   u8g2Fonts.setForegroundColor(GxEPD_BLACK);
   u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
@@ -145,9 +139,6 @@ void displayTime() {
   Serial.println("DISPLAY TIME = finish");
 }
 
-void changeTime () {
-
-}
 
 void loop() {
   Serial.println("VOID LOOP = start");
@@ -180,6 +171,31 @@ void loop() {
 
   // Disable external pin interrupt on wake up pin.
   detachInterrupt(digitalPinToInterrupt(2));
+
+  while (changeTime == 1) {
+    Serial.println("changetime");
+    byte upState = digitalRead(up);
+    byte downState = digitalRead(down);
+    byte changeHrState = digitalRead(changeHr);
+    byte changeMinSate = digitalRead(changeMin);
+    if ( changeHrState == HIGH ) {
+      Serial.println("changeHrState == HIGH");
+      changeHrState = HIGH;
+      while (changeHrState == HIGH) {
+        if (upState == HIGH) {
+          Serial.println("hr, up");
+          rtc.setHours(rtc.getHours() + 1);
+          displayTime();
+          delay(500);
+        }
+        delay(500);
+        if (digitalRead(changeHr) == HIGH) {
+          changeHrState = LOW;
+          changeTime = LOW;
+        }
+      }
+    }
+  } 
 
 }
 
