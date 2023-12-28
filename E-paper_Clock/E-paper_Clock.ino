@@ -50,10 +50,10 @@ void setup() {
   pinMode(wakeUpPin, INPUT_PULLUP);
 
 // time adjustment buttons with pullup resistor
-  pinMode (up, INPUT_PULLUP);
-  pinMode (down, INPUT_PULLUP);
   pinMode (changeHr, INPUT_PULLUP);
   pinMode (changeMin, INPUT_PULLUP);
+  pinMode (up, INPUT_PULLUP);
+  pinMode (down, INPUT_PULLUP);
 
 // allows for the change time buttons to interput the loop
   PCICR |= B00000100; //turns on PCINT for pins in group d
@@ -106,10 +106,6 @@ void displayTime() {
   Serial.println("DISPLAY TIME = start");
   Serial.println("1 ");
   rtc.updateTime();
-    Serial.print("2 ");
-  String timeString = rtc.stringTime();
-  Serial.println(rtc.stringTime());
-  Serial.print("3 ");
 
   u8g2Fonts.setForegroundColor(GxEPD_BLACK);
   u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
@@ -145,7 +141,6 @@ void displayTime() {
   display.hibernate();
   Serial.println("DISPLAY TIME = finish");
 }
-
 
 
 void loop() {
