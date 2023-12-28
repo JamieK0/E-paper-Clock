@@ -1,6 +1,3 @@
-// Simple Clock with date on epaper screen with Arduino
-// www.henryleach.com
-
 #include <RV-3028-C7.h>
 #include <LowPower.h>  // https://github.com/rocketscream/Low-Power
 #include <U8g2_for_Adafruit_GFX.h> // https://github.com/olikraus/U8g2_for_Adafruit_GFX
@@ -19,8 +16,8 @@ const uint8_t dstPin(4); // connect to GND to add 1 hour as DST.
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 53;
-int hour = 18;
+int minute = 6;
+int hour = 19;
 int day = 3;
 int date = 27;
 int month = 12;
@@ -47,7 +44,7 @@ void setup()
   pinMode(wakeUpPin, INPUT_PULLUP);
   pinMode(dstPin, INPUT_PULLUP);
   rtc.enableTrickleCharge(TCR_3K);   //series resistor 3kOhm
-  rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME
+  //rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME
   Serial.println("VOID SETUP = 1/2");
   getDstTime();
   displayDate();
