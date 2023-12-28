@@ -36,9 +36,9 @@ void setup() {
   Wire.begin();
   if (rtc.begin() == false) {
     Serial.println("Something went wrong, check wiring");
+    while (1) 
     return;
-    while (1)
-      ;
+    
   } else
     Serial.println("RTC online!");
   Serial.println();
@@ -104,24 +104,28 @@ void displayDate() {
 // Displays the time in the top half of the screen, as a partial refresh
 void displayTime() {
   Serial.println("DISPLAY TIME = start");
-
+  Serial.println("1 ");
   rtc.updateTime();
+    Serial.print("2 ");
   String timeString = rtc.stringTime();
-  Serial.println(timeString);
-
+  Serial.println(rtc.stringTime());
+  Serial.print("3 ");
 
   u8g2Fonts.setForegroundColor(GxEPD_BLACK);
   u8g2Fonts.setBackgroundColor(GxEPD_WHITE);
   // Only numbers and symbols to save space.https://github.com/olikraus/u8g2/wiki/fntlist99#50-pixel-height
   u8g2Fonts.setFont(u8g2_font_logisoso50_tn);
+  Serial.print("4 ");
 
   uint16_t x = 60;
   uint16_t y = 62;  //top half, depends on font
+  Serial.print("5 ");
 
   display.setPartialWindow(0, 0, display.width(), display.height() / 2);
   display.firstPage();
   do  // Update the upper part of the screen
   {
+      Serial.print("6 ");
     u8g2Fonts.setCursor(x, y);
     if (rtc.getHours() < 10) {
       u8g2Fonts.print(0);
@@ -176,12 +180,33 @@ void loop() {
   // Disable external pin interrupt on wake up pin.
   detachInterrupt(digitalPinToInterrupt(2));
 
-  do (changeTime == 1) {
-    changeTime = 0;
-    rtc.setHours(rtc.getHours() + 1);
-  }
-
+  while (changeTime == 1) {
+    Serial.println("changetime");
+    byte upState = digitalRead(up);
+    byte downState = digitalRead(down);
+    byte changeHrState = digitalRead(changeHr);
+    byte changeMinSate = digitalRead(changeMin);
+    if ( changeHrState == HIGH ) {
+      Serial.println("changeHrState == HIGH");
+      changeHrState = HIGH;
+      while (changeHrState == HIGH) {
+        if (upState == HIGH) {
+          Serial.println("hr, up");
+          rtc.setHours(rtc.getHours() + 1);
+          displayTime();
+          delay(500);
+        }
+        delay(500);
+        if (digitalRead(changeHr) == HIGH) {
+          changeHrState = LOW;
+          changeTime = LOW;
+        }
+      }
+    }
+  } 
 }
+
+
 
 void alarmIsr () {
 
