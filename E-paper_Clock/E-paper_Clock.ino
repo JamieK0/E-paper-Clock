@@ -14,16 +14,16 @@ RV3028 rtc;                       // create the RTC object
 
 const uint8_t wakeUpPin(2);  // connect Arduino pin D2 to RTC's SQW pin.
 
-const uint8_t changeMin(1); // Button to increase minutes
-const uint8_t changeHr(5); // Button to decrease minutes
-const uint8_t up(0); // Button to increase hours
-const uint8_t down(4); // Button to decrease hours
+const uint8_t changeMin(4); // Button to increase minutes. THE CONNECTED PORT NEEDS TO BE THE PCINT PIN NOT THE DIGITAL PIN FROM THE PINOUT SHEET
+const uint8_t changeHr(5); // Button to decrease minutes THE CONNECTED PORT NEEDS TO BE THE PCINT PIN NOT THE DIGITAL PIN FROM THE PINOUT SHEET
+const uint8_t up(0); // Button to increase hours. Regular digital pin from pinout sheet
+const uint8_t down(1); // Button to decrease hours. Regular digital pin from pinout sheet
 
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 6;
-int hour = 19;
+int minute = 22;
+int hour = 9;
 int day = 3;
 int date = 27;
 int month = 12;
@@ -51,13 +51,14 @@ void setup() {
 // time adjustment buttons with pullup resistor
   pinMode (changeHr, INPUT);
   pinMode (changeMin, INPUT);
-  pinMode (up, INPUT_PULLUP);
-  pinMode (down, INPUT_PULLUP);
+  pinMode (up, INPUT);
+  pinMode (down, INPUT);
 
 // allows the change buttons to interput the loop
-  //ISR(PCINT2_vect); //turns on PCINT for pins in group d
-  attachPCINT(digitalPinToPCINT(changeHr), PCINTchangeHr, RISING);
-  attachPCINT(digitalPinToPCINT(changeMin), PCINTchangeMin, RISING);
+  PCICR |= B00000100; //turns on PCINT for pins in group d
+  PCMSK2 |= B00110000; //Pins D4 and D5 will interupt
+  //attachPCINT(20, PCINTchangeHr, FALLING);
+  //attachPCINT(21, PCINTchangeMin, FALLING);
 
   rtc.enableTrickleCharge(TCR_3K);  //series resistor 3kOhm
   rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME. Once set it needs to be commented out
@@ -65,15 +66,12 @@ void setup() {
   displayDate();
 }
 
-void PCINTchangeHr()
+void PCINT2_vect()
 {
   Serial.println("change hr button");
+  displayDate();
 }
 
-void PCINTchangeMin()
-{
-  Serial.println("change min button");
-}
 
 // Displays the date in the bottom half of the screen
 // and does a complete screen refresh
