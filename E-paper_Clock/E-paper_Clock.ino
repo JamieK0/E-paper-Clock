@@ -4,26 +4,37 @@
 #include <u8g2_fonts.h>             // https://github.com/ZinggJM/GxEPD2
 #include <GxEPD2_BW.h>              // including both doesn't use more code or ram
 #include <GxEPD2_3C.h>              // including both doesn't use more code or ram
-#include "PinChangeInterrupt.h" // allows for time adjustment buttons to interupt the sleep state and loop
 
 // select the display class and display driver class in the following file (new style):
 #include "GxEPD2_display_selection.h"
+
+#include <ez_switch_lib.h> // Library for the buttons
+
+#define common_interrupt_pin 8 //Pin that the switches will link to via ez_switch. This pin will trigger the PCINT interupt
+#define num_switches 2 //Number of switches that is linked to the trigger
+Switches  my_switches(num_switches);
+
+byte my_switch_data[][3] =
+{
+    button_switch,  4, circuit_C2, //circuit_C2 is a dirrectly attached circuit with no external resistor
+    button_switch,  5, circuit_C2,
+};
 
 U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;  // font constructor
 RV3028 rtc;                       // create the RTC object
 
 const uint8_t wakeUpPin(2);  // connect Arduino pin D2 to RTC's SQW pin.
 
-const uint8_t changeMin(4); // Button to increase minutes. THE CONNECTED PORT NEEDS TO BE THE PCINT PIN NOT THE DIGITAL PIN FROM THE PINOUT SHEET
-const uint8_t changeHr(5); // Button to decrease minutes THE CONNECTED PORT NEEDS TO BE THE PCINT PIN NOT THE DIGITAL PIN FROM THE PINOUT SHEET
-const uint8_t up(0); // Button to increase hours. Regular digital pin from pinout sheet
-const uint8_t down(1); // Button to decrease hours. Regular digital pin from pinout sheet
+//const uint8_t changeMin(4); // Button to change minutes
+//const uint8_t changeHr(5); // Button to change hours
+const uint8_t up(0); // Button to increase time
+const uint8_t down(1); // Button to decrease time
 
 
 //The below variables control what the date will be set to
 int sec = 0;
-int minute = 22;
-int hour = 9;
+int minute = 44;
+int hour = 5;
 int day = 3;
 int date = 27;
 int month = 12;
@@ -31,11 +42,12 @@ int year = 2023;
 
 
 void setup() {
-
+  int result;
   Serial.begin(115200);
   Wire.begin();
   if (rtc.begin() == false) {
     Serial.println("Something went wrong, check wiring");
+    return;
     while (1)
       ;
   } else
@@ -49,29 +61,38 @@ void setup() {
   pinMode(wakeUpPin, INPUT_PULLUP);
 
 // time adjustment buttons with pullup resistor
-  pinMode (changeHr, INPUT);
-  pinMode (changeMin, INPUT);
-  pinMode (up, INPUT);
-  pinMode (down, INPUT);
+  pinMode (up, INPUT_PULLUP);
+  pinMode (down, INPUT_PULLUP);
 
-// allows the change buttons to interput the loop
+// allows for the change time buttons to interput the loop
   PCICR |= B00000100; //turns on PCINT for pins in group d
   PCMSK2 |= B00110000; //Pins D4 and D5 will interupt
-  //attachPCINT(20, PCINTchangeHr, FALLING);
-  //attachPCINT(21, PCINTchangeMin, FALLING);
-
   rtc.enableTrickleCharge(TCR_3K);  //series resistor 3kOhm
   rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME. Once set it needs to be commented out
   Serial.println("VOID SETUP = 1/2");
   displayDate();
 }
+/*
+ISR (PCINT1_vect) {
+  Serial.println("first stop in interupt");
+  if (changeHr == 0) {
+    uint8_t currentHour = rtc.getHours();
+    Serial.println("within change hrs");
+    do {
+      rtc.setHours(currentHour++);
+    }
+    while (up == 0);
+    do {
+      rtc.setHours(currentHour - 1);
+    }
+    while (down == 0);
 
-void PCINT2_vect()
-{
-  Serial.println("change hr button");
-  displayDate();
+    }
+  else if (changeMin == 0){
+    return;
+  }
 }
-
+*/
 
 // Displays the date in the bottom half of the screen
 // and does a complete screen refresh
@@ -111,6 +132,7 @@ void displayTime() {
 
   rtc.updateTime();
   String timeString = rtc.stringTime();
+  Serial.println(timeString);
 
 
   u8g2Fonts.setForegroundColor(GxEPD_BLACK);
