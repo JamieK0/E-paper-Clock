@@ -28,6 +28,7 @@ int date = 27;
 int month = 12;
 int year = 2023;
 
+volatile int changeTime = 0;
 
 void setup() {
   int result;
@@ -63,24 +64,8 @@ void setup() {
   displayDate();
 }
 
-ISR (PCINT1_vect) {
-  Serial.println("first stop in interupt");
-  if (changeHr == 0) {
-    uint8_t currentHour = rtc.getHours();
-    Serial.println("within change hrs");
-    do {
-      rtc.setHours(currentHour++);
-    }
-    while (up == 0);
-    do {
-      rtc.setHours(currentHour - 1);
-    }
-    while (down == 0);
-
-    }
-  else if (changeMin == 0){
-    return;
-  }
+ISR (PCINT2_vect) {
+  changeTime = 1;
 }
 
 
@@ -157,9 +142,7 @@ void displayTime() {
   Serial.println("DISPLAY TIME = finish");
 }
 
-void changeTime () {
 
-}
 
 void loop() {
   Serial.println("VOID LOOP = start");
@@ -192,6 +175,11 @@ void loop() {
 
   // Disable external pin interrupt on wake up pin.
   detachInterrupt(digitalPinToInterrupt(2));
+
+  do (changeTime == 1) {
+    changeTime = 0;
+    rtc.setHours(rtc.getHours() + 1);
+  }
 
 }
 
