@@ -15,8 +15,8 @@ const uint8_t wakeUpPin(2);  // connect Arduino pin D2 to RTC's SQW pin.
 
 const uint8_t changeFunc(4); // Button to change whether hours or minutes are changed and to turn off the change time mode
 const uint8_t changeOn(5); // Button to turn on changing time mode
-const uint8_t up(0); // Button to increase time
-const uint8_t down(1); // Button to decrease time
+const uint8_t up(8); // Button to increase time
+const uint8_t down(3); // Button to decrease time
 
 
 //The below variables control what the date will be set to
