@@ -29,6 +29,7 @@ int month = 12;
 int year = 2023;
 
 volatile int changeTime = 0;
+    int changeFuncState = 0; //Function button set to 0 initally
 
 void setup() {
   int result;
@@ -180,40 +181,37 @@ void loop() {
     byte upState = digitalRead(up);
     byte downState = digitalRead(down);
     digitalRead(changeFunc);
-    int changeFuncState = 0;
 
-  if ( digitalRead(changeFunc) == HIGH ) { 
-    changeFuncState++;
+
+  if ( digitalRead(changeFunc) == LOW ) { 
+    changeFuncState = changeFuncState + 1;
+    Serial.println(changeFuncState);
     delay (250);
   }
 
   if ( changeFuncState == 0 ) { // Changes the hours. Runs when changeFuncState == 0, therefore runs right after the ISR and is the default mode.
-    if ( upState == HIGH ) {
+    if ( upState == LOW ) {
       delay(250);
       Serial.println("hr, up");
       rtc.setHours(rtc.getHours() + 1);
-      displayTime();
     }
-    else if ( downState == HIGH ) {
+    else if ( downState == LOW ) {
       delay(250);
       Serial.println("hr, down");
       rtc.setHours(rtc.getHours() - 1);
-      displayTime(); 
     }
   }
 
   else if ( changeFuncState == 1 ) { // Changes the minutes
-    if ( upState == HIGH ) {
+    if ( upState == LOW ) {
       delay(250);
       Serial.println("min, up");
-      rtc.setHours(rtc.getMinutes() + 1);
-      displayTime();
+      rtc.setMinutes(rtc.getMinutes() + 1);
     }
-    else if ( downState == HIGH ) {
+    else if ( downState == LOW ) {
       delay(250);
       Serial.println("min, down");
-      rtc.setHours(rtc.getMinutes() - 1);
-      displayTime(); 
+      rtc.setMinutes(rtc.getMinutes() - 1);
     }
 
   }
