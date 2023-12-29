@@ -13,8 +13,8 @@ RV3028 rtc;                       // create the RTC object
 
 const uint8_t wakeUpPin(2);  // connect Arduino pin D2 to RTC's SQW pin.
 
-const uint8_t changeMin(4); // Button to change minutes
-const uint8_t changeHr(5); // Button to change hours
+const uint8_t changeFunc(4); // Button to change whether hours or minutes are changed and to turn off the change time mode
+const uint8_t changeOn(5); // Button to turn on changing time mode
 const uint8_t up(0); // Button to increase time
 const uint8_t down(1); // Button to decrease time
 
@@ -50,14 +50,14 @@ void setup() {
   pinMode(wakeUpPin, INPUT_PULLUP);
 
 // time adjustment buttons with pullup resistor
-  pinMode (changeHr, INPUT_PULLUP);
-  pinMode (changeMin, INPUT_PULLUP);
+  pinMode (changeOn, INPUT_PULLUP);
+  pinMode (changeFunc, INPUT_PULLUP);
   pinMode (up, INPUT_PULLUP);
   pinMode (down, INPUT_PULLUP);
 
 // allows for the change time buttons to interput the loop
   PCICR |= B00000100; //turns on PCINT for pins in group d
-  PCMSK2 |= B00110000; //Pins D4 and D5 will interupt
+  PCMSK2 |= B00100000; //Pin D5 will interupt
   rtc.enableTrickleCharge(TCR_3K);  //series resistor 3kOhm
   rtc.setTime(sec, minute, hour, day, date, month, year);  //USE THIS TO INITALLY SET TIME. Once set it needs to be commented out
   Serial.println("VOID SETUP = 1/2");
@@ -179,25 +179,49 @@ void loop() {
     Serial.println("changetime");
     byte upState = digitalRead(up);
     byte downState = digitalRead(down);
-    byte changeHrState = digitalRead(changeHr);
-    byte changeMinSate = digitalRead(changeMin);
-    if ( changeHrState == HIGH ) {
-      Serial.println("changeHrState == HIGH");
-      changeHrState = HIGH;
-      while (changeHrState == HIGH) {
-        if (upState == HIGH) {
-          Serial.println("hr, up");
-          rtc.setHours(rtc.getHours() + 1);
-          displayTime();
-          delay(500);
-        }
-        delay(500);
-        if (digitalRead(changeHr) == HIGH) {
-          changeHrState = LOW;
-          changeTime = LOW;
-        }
-      }
+    digitalRead(changeFunc);
+    int changeFuncState = 0;
+
+  if ( digitalRead(changeFunc) == HIGH ) { 
+    changeFuncState++;
+    delay (250);
+  }
+
+  if ( changeFuncState == 0 ) { // Changes the hours. Runs when changeFuncState == 0, therefore runs right after the ISR and is the default mode.
+    if ( upState == HIGH ) {
+      delay(250);
+      Serial.println("hr, up");
+      rtc.setHours(rtc.getHours() + 1);
+      displayTime();
     }
+    else if ( downState == HIGH ) {
+      delay(250);
+      Serial.println("hr, down");
+      rtc.setHours(rtc.getHours() - 1);
+      displayTime(); 
+    }
+  }
+
+  else if ( changeFuncState == 1 ) { // Changes the minutes
+    if ( upState == HIGH ) {
+      delay(250);
+      Serial.println("min, up");
+      rtc.setHours(rtc.getMinutes() + 1);
+      displayTime();
+    }
+    else if ( downState == HIGH ) {
+      delay(250);
+      Serial.println("min, down");
+      rtc.setHours(rtc.getMinutes() - 1);
+      displayTime(); 
+    }
+
+  }
+  else if ( changeFuncState == 2 ) { //Turns off change time function of the clock
+  changeFuncState = 0;
+  changeTime = LOW;
+  }
+
   } 
 }
 
