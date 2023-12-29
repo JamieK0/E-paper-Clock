@@ -194,11 +194,13 @@ void loop() {
       delay(250);
       Serial.println("hr, up");
       rtc.setHours(rtc.getHours() + 1);
+      displayTime();
     }
     else if ( downState == LOW ) {
       delay(250);
       Serial.println("hr, down");
       rtc.setHours(rtc.getHours() - 1);
+      displayTime();
     }
   }
 
@@ -207,17 +209,20 @@ void loop() {
       delay(250);
       Serial.println("min, up");
       rtc.setMinutes(rtc.getMinutes() + 1);
+      displayTime();
     }
     else if ( downState == LOW ) {
       delay(250);
       Serial.println("min, down");
       rtc.setMinutes(rtc.getMinutes() - 1);
+      displayTime();
     }
 
   }
   else if ( changeFuncState == 2 ) { //Turns off change time function of the clock
   changeFuncState = 0;
   changeTime = LOW;
+  displayDate(); //Fully refreshes the display
   }
 
   } 
