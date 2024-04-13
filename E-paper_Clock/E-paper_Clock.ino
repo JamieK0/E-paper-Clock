@@ -1,5 +1,5 @@
-#include <RV-3028-C7.h>
-#include <LowPower.h>               // https://github.com/rocketscream/Low-Power
+#include <RV-3028-C7.h>             // RTC Library
+#include <LowPower.h>               // Reduces power consumption https://github.com/rocketscream/Low-Power
 #include <U8g2_for_Adafruit_GFX.h>  // https://github.com/olikraus/U8g2_for_Adafruit_GFX
 #include <u8g2_fonts.h>             // https://github.com/ZinggJM/GxEPD2
 #include <GxEPD2_BW.h>              // including both doesn't use more code or ram
@@ -7,17 +7,6 @@
 
 // select the display class and display driver class in the following file (new style):
 #include "GxEPD2_display_selection.h"
-
-U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;  // font constructor
-RV3028 rtc;                       // create the RTC object
-
-const uint8_t wakeUpPin(2);  // connect Arduino pin D2 to RTC's SQW pin.
-
-const uint8_t changeFunc(4);  // Button to change whether hours or minutes are changed and to turn off the change time mode
-const uint8_t changeOn(5);    // Button to turn on changing time mode, this button causes the interrupt
-const uint8_t up(8);          // Button to increase time
-const uint8_t down(3);        // Button to decrease time
-
 
 //The below variables control what the date will be set to. Uncomment the line bellow in setup that sets the rtc to the time here. After compiling, the line needs to be commented out again so that the Arduino does not set the time to this time every time it loses power
 int sec = 0;
@@ -27,6 +16,16 @@ int day = 5;
 int date = 29;
 int month = 12;
 int year = 2023;
+
+U8G2_FOR_ADAFRUIT_GFX u8g2Fonts;  // font constructor
+RV3028 rtc;                       // create the RTC object
+
+const uint8_t wakeUpPin(2);  // connect Arduino pin D2 to RTC's SQW pin. Wakes up the Arduino each minute from sleep mode.
+
+const uint8_t changeFunc(4);  // Button to change function from changing hours to changing minutes to exit changing time mode
+const uint8_t changeOn(5);    // Button to turn on changing time mode, this button causes the interrupt. Do not change this pin to any other pin unless the PCINT paramaters are also changed below.
+const uint8_t up(8);          // Button to increase time
+const uint8_t down(3);        // Button to decrease time
 
 volatile int changeTime = 0; //Integer that gets changed when the interrupt occurs
 int changeFuncState = 0;  //Function button set to 0 initally
@@ -42,7 +41,7 @@ void setup() {
     Serial.println("RTC online!");
   Serial.println();
 
-  u8g2Fonts.begin(display);  // connect the u8g2
+  u8g2Fonts.begin(display);  // connect the u8g2 display
 
   // configures interupt pin
   pinMode(wakeUpPin, INPUT_PULLUP);
@@ -84,7 +83,7 @@ void displayDate() {
   String dateString = rtc.stringDate();  //rtc to output current date
   Serial.println(rtc.stringDate());
 
-  uint16_t x = 70;
+  uint16_t x = 73;
   uint16_t y = 110;  //bottom
   // covers bottom half
   display.setFullWindow();
@@ -108,7 +107,7 @@ void displayTime() {
   // Only numbers and symbols to save space.https://github.com/olikraus/u8g2/wiki/fntlist99#50-pixel-height
   u8g2Fonts.setFont(u8g2_font_logisoso50_tn);
 
-  uint16_t x = 60;
+  uint16_t x = 70;
   uint16_t y = 62;  //top half, depends on font
 
   display.setPartialWindow(0, 0, display.width(), display.height() / 2);
