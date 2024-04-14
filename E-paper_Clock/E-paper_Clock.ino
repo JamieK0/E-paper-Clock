@@ -1,9 +1,7 @@
 #include <RV-3028-C7.h>             // RTC Library
 #include <LowPower.h>               // Reduces power consumption https://github.com/rocketscream/Low-Power
 #include <U8g2_for_Adafruit_GFX.h>  // https://github.com/olikraus/U8g2_for_Adafruit_GFX
-#include <u8g2_fonts.h>             // https://github.com/ZinggJM/GxEPD2
 #include <GxEPD2_BW.h>              // including both doesn't use more code or ram
-#include <GxEPD2_3C.h>              // including both doesn't use more code or ram
 
 // select the display class and display driver class in the following file (new style):
 #include "GxEPD2_display_selection.h"
