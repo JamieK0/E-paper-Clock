@@ -51,13 +51,13 @@ Another useful function of the clock is that it uses a supercapacitor to ensure 
 | D13     | CLK             | CLK      |                                                                                                               |
 
 ### **Schematic**
-![[Schematic.png]]
+![Schematic](Images/Schematic.png)
 ### **Assembly Instructions**
 1. Connect the jumper wires from the Arduino’s male headers to the female headers on the E-paper module according to the schematic diagram or wiring table below. Some connections may need to be soldered, like the D13-CLK-CLK connection, since multiple devices are connecting to the same pin on the Arduino. The buttons all have to be soldered as well. Keep at least 8cm on each wire connected to the button so that there is enough slack for the buttons to be placed at the back of the case.
 2. Optionally hot glue the jumper wire connections so that they cannot lose contact over time. For a more permanent setup, all the connections can be soldered.
 3. Plug the Arduino Nano into your computer and adjust the Arduino sketch.
    	1. Ensure that the ZIP libraries are all installed. They are all on the Github repository below under the E-paper_Clock folder. Install them at Sketch → Include Library → Add .ZIP Library. The libraries are Low Power, GxEPD2 and U8g2 for Adafruit GFX.
-	2. Ensure that the time and date variables (int year =, int month =, etc) are set to the current date and time.![[Screenshot 2024-04-13 at 2.12.42 pm 1.png]]
+	2. Ensure that the time and date variables (int year =, int month =, etc) are set to the current date and time.![Variables](Images/Screenshot 2024-04-13 at 2.12.42 pm 1.png)
 	3. Uncomment line 59 
 ```
 //rtc.setTime(sec, minute, hour, day, date, month, year); //USE THIS TO INITALLY SET TIME. Once set it needs to be commented out so that it doesn't get set to this time every restart
@@ -83,13 +83,13 @@ By removing the ‘//’ from the start.
 - Solid Layers:
 - Top: 4
 - Bottom: 4
-![[Screenshot 2024-04-13 at 2.23.16 pm.png]]
+![Print](Images/Screenshot 2024-04-13 at 2.23.16 pm.png)
 6. Melt the heated inserts into the 6 holes in the 3d print using a soldering iron. [Video demonstration](https://youtu.be/i6GkWjcWj5w?t=235).
 7. Remove the e-paper screen protector and position the screen in the 3d print with the screen opening. Hot glue the corners of the back of the screen to the 3d print.
-   ![[IMG_1392.jpg]]
+  ![Build](Images/IMG_1392.jpg)
 8. Move all the electronics through the front of the main case and press the front closed. Its friction fit so it might take some force depending on your printer’s dimensional accuracy.
 9. Hot glue each button to the back piece in the button holes. Order the buttons so that they make sense when using them to change the time, i.e. the down button is below the up button.
-10. Plug the USB cable into the Arduino and guide the cable through the hole at the bottom of the back piece.![[IMG_1396 1.jpg]]
+10. Plug the USB cable into the Arduino and guide the cable through the hole at the bottom of the back piece.![Build2](Images/IMG_1396.jpg)
 11. Push the back piece into the case of the clock. Once again it’s a friction fit.
 12. Screw the 3 grubscrews through the heated inserts at the bottom of the case. This will hold all the pieces of the case together.
 13. Plug the Arduino to a USB wall plug or computer port for power.
