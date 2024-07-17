@@ -67,10 +67,10 @@ Another useful function of the clock is that it uses a supercapacitor to ensure 
 ```
 //rtc.setTime(sec, minute, hour, day, date, month, year); //USE THIS TO INITALLY SET TIME. Once set it needs to be commented out so that it doesn't get set to this time every restart
 ```
-
-6. Upload the sketch again. The clock is now programmed.
-4. 3D print the 3 case parts. They can be printed individually or all together.
-5. The main case might need a brim depending on your printer since the contact area is quite small.
+3.
+	6. Upload the sketch again. The clock is now programmed.
+	4. 3D print the 3 case parts. They can be printed individually or all together.
+	5. The main case might need a brim depending on your printer since the contact area is quite small.
 
 #### Print settings:
 - Filament type: PLA
