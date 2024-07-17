@@ -86,7 +86,7 @@ Another useful function of the clock is that it uses a supercapacitor to ensure 
 ![Print](Images/Screenshot 2024-04-13 at 2.23.16 pm.png)
 6. Melt the heated inserts into the 6 holes in the 3d print using a soldering iron. [Video demonstration](https://youtu.be/i6GkWjcWj5w?t=235).
 7. Remove the e-paper screen protector and position the screen in the 3d print with the screen opening. Hot glue the corners of the back of the screen to the 3d print.
-  ![Build](Images/IMG_1392.jpg)
+![Build](Images/IMG_1392.jpg)
 8. Move all the electronics through the front of the main case and press the front closed. Its friction fit so it might take some force depending on your printer’s dimensional accuracy.
 9. Hot glue each button to the back piece in the button holes. Order the buttons so that they make sense when using them to change the time, i.e. the down button is below the up button.
 10. Plug the USB cable into the Arduino and guide the cable through the hole at the bottom of the back piece.![Build2](Images/IMG_1396.jpg)
