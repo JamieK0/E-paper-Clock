@@ -58,11 +58,10 @@ Another useful function of the clock is that it uses a supercapacitor to ensure 
 3. Plug the Arduino Nano into your computer and adjust the Arduino sketch.
    	1. Ensure that the ZIP libraries are all installed. They are all on the Github repository below under the E-paper_Clock folder. Install them at Sketch → Include Library → Add .ZIP Library. The libraries are Low Power, GxEPD2 and U8g2 for Adafruit GFX.
 	2. Ensure that the time and date variables (int year =, int month =, etc) are set to the current date and time.![Variables](Images/Screenshot 2024-04-13 at 2.12.42 pm 1.png)
-	3. Uncomment line 59 
+	3. Uncomment line 59 by removing the ‘//’ from the start. Line 59:
 ```
 //rtc.setTime(sec, minute, hour, day, date, month, year); //USE THIS TO INITALLY SET TIME. Once set it needs to be commented out so that it doesn't get set to this time every restart
 ```
-		By removing the ‘//’ from the start.
 	4. Upload the sketch. Set the board to Arduino AVR Boards → Arduino Nano. 
 	5. Turn the line above back into a comment by adding the ‘//’ to the start so that it looks like:
 ```
