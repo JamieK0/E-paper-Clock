@@ -62,7 +62,7 @@ Another useful function of the clock is that it uses a supercapacitor to ensure 
 ```
 //rtc.setTime(sec, minute, hour, day, date, month, year); //USE THIS TO INITALLY SET TIME. Once set it needs to be commented out so that it doesn't get set to this time every restart
 ```
-By removing the ‘//’ from the start.
+		By removing the ‘//’ from the start.
 	4. Upload the sketch. Set the board to Arduino AVR Boards → Arduino Nano. 
 	5. Turn the line above back into a comment by adding the ‘//’ to the start so that it looks like:
 ```
