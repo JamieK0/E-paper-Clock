@@ -1,5 +1,5 @@
 # Easy on the Eyes E-paper Clock
-![[IMG_0011.jpg]]
+![[images/IMG_0011.jpg]]
 ## Introduction
 This project started as a desire to have a modern digital clock that would use the natural light of the room for illumination. This means that the screen is always at a natural brightness, with it looking like paper rather than a traditional screen. By using an E-paper display, blue light is not emitted meaning that the clock does not disrupt your circadian rhythm before bed. It seamlessly updates every minute, and on the hour the screen does a full refresh.
 
